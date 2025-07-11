@@ -59,4 +59,17 @@ temp/
 screenshots/
 
 # Local development files
-.local 
+.local
+
+# Docker volumes and data
+docker-data/
+postgres_data/
+redis_data/
+
+# Database backups
+backups/
+*.sql
+*.dump
+
+# Docker override files
+docker-compose.override.yml 

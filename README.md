@@ -80,14 +80,41 @@ invoice-app/
 ### Prerequisites
 - Node.js 16+ and npm
 - Git
+- Docker & Docker Compose (recommended)
 
-### 1. Clone the Repository
+### Option 1: Docker Deployment (Recommended)
+
+```bash
+git clone https://github.com/yourusername/invoice-management-system.git
+cd invoice-management-system/invoice-app
+
+# Copy environment template
+cp docker.env.example .env
+
+# Edit environment variables (change passwords and secrets!)
+nano .env
+
+# Start production environment
+docker-compose up -d
+
+# Check status
+docker-compose ps
+```
+
+**Services will be available at:**
+- **Application**: http://localhost:3000
+- **API**: http://localhost:3000/api
+- **Direct Backend**: http://localhost:4001
+
+### Option 2: Manual Installation
+
+#### 1. Clone the Repository
 ```bash
 git clone https://github.com/yourusername/invoice-management-system.git
 cd invoice-management-system/invoice-app
 ```
 
-### 2. Backend Setup
+#### 2. Backend Setup
 ```bash
 cd backend
 npm install
@@ -102,7 +129,7 @@ npm run start:dev
 The backend will be available at: http://localhost:4001
 API documentation: http://localhost:4001/api
 
-### 3. Frontend Setup
+#### 3. Frontend Setup
 ```bash
 cd ../frontend
 npm install
@@ -112,6 +139,10 @@ npm run dev
 ```
 
 The frontend will be available at: http://localhost:3001
+
+### 🐳 Docker Documentation
+
+For detailed Docker setup, configuration, and management, see [DOCKER.md](DOCKER.md)
 
 ## 🔧 Configuration
 
@@ -168,7 +199,33 @@ Once the backend is running, visit http://localhost:4001/api for interactive API
 
 ## 🚀 Deployment
 
-### Backend Deployment
+### Docker Deployment (Recommended)
+
+The easiest way to deploy the application is using Docker:
+
+```bash
+# Production deployment
+docker-compose up -d
+
+# Development environment
+docker-compose -f docker-compose.dev.yml up -d
+
+# Scale services for high availability
+docker-compose up -d --scale backend=3
+```
+
+**Features of Docker deployment:**
+- 🐳 Complete containerization with PostgreSQL and Redis
+- 🔄 Health checks and automatic restarts
+- 📊 Built-in monitoring and logging
+- 🔧 Easy backup and restore functionality
+- 🚀 One-command deployment
+
+See [DOCKER.md](DOCKER.md) for complete Docker documentation.
+
+### Manual Deployment
+
+#### Backend Deployment
 The backend is configured for deployment on platforms like Railway, Heroku, or any Node.js hosting service.
 
 1. Set production environment variables
@@ -176,12 +233,30 @@ The backend is configured for deployment on platforms like Railway, Heroku, or a
 3. Build the application: `npm run build`
 4. Start production server: `npm run start:prod`
 
-### Frontend Deployment
+#### Frontend Deployment
 The frontend can be deployed on platforms like Vercel, Netlify, or any static hosting service.
 
 1. Build the application: `npm run build`
 2. Deploy the `dist` folder
 3. Configure environment variables on your hosting platform
+
+### Cloud Platforms
+
+#### AWS ECS
+```bash
+# Build and push images
+docker build -t your-registry/invoice-frontend ./frontend
+docker build -t your-registry/invoice-backend ./backend
+```
+
+#### Google Cloud Run
+```bash
+# Deploy with Cloud Build
+gcloud builds submit --config cloudbuild.yaml
+```
+
+#### DigitalOcean App Platform
+Use the included `docker-compose.yml` for app platform deployment.
 
 ## 🤝 Contributing
 

@@ -1,0 +1,103 @@
+version: '3.8'
+
+services:
+  # PostgreSQL Database
+  database:
+    image: postgres:15-alpine
+    container_name: invoice-db-dev
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: invoice_management_dev
+      POSTGRES_USER: invoice_user
+      POSTGRES_PASSWORD: invoice_password_dev
+      PGDATA: /var/lib/postgresql/data/pgdata
+    volumes:
+      - postgres_dev_data:/var/lib/postgresql/data
+    ports:
+      - "5433:5432"
+    networks:
+      - invoice-dev-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U invoice_user -d invoice_management_dev"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # NestJS Backend API (Development mode with hot reload)
+  backend-dev:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile.dev
+      target: development
+    container_name: invoice-backend-dev
+    restart: unless-stopped
+    environment:
+      NODE_ENV: development
+      PORT: 4001
+      DATABASE_URL: postgresql://invoice_user:invoice_password_dev@database:5432/invoice_management_dev
+      JWT_SECRET: dev-jwt-secret-key-not-for-production
+      FRONTEND_URL: http://localhost:3001
+    volumes:
+      - ./backend:/app
+      - /app/node_modules
+      - backend_dev_uploads:/app/uploads
+    ports:
+      - "4001:4001"
+      - "9229:9229" # Debug port
+    networks:
+      - invoice-dev-network
+    depends_on:
+      database:
+        condition: service_healthy
+    command: npm run start:dev
+
+  # Redis for development
+  redis-dev:
+    image: redis:7-alpine
+    container_name: invoice-redis-dev
+    restart: unless-stopped
+    command: redis-server --appendonly yes
+    volumes:
+      - redis_dev_data:/data
+    ports:
+      - "6380:6379"
+    networks:
+      - invoice-dev-network
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # pgAdmin for database management
+  pgadmin:
+    image: dpage/pgadmin4:latest
+    container_name: invoice-pgadmin
+    restart: unless-stopped
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@invoice.local
+      PGADMIN_DEFAULT_PASSWORD: admin123
+      PGADMIN_CONFIG_SERVER_MODE: 'False'
+    volumes:
+      - pgadmin_data:/var/lib/pgadmin
+    ports:
+      - "8080:80"
+    networks:
+      - invoice-dev-network
+    depends_on:
+      - database
+
+volumes:
+  postgres_dev_data:
+    driver: local
+  redis_dev_data:
+    driver: local
+  backend_dev_uploads:
+    driver: local
+  pgadmin_data:
+    driver: local
+
+networks:
+  invoice-dev-network:
+    driver: bridge
+    name: invoice-dev-network 
