@@ -38,15 +38,36 @@
 
           <!-- User menu -->
           <div v-if="authStore.isAuthenticated" class="flex items-center space-x-4">
-            <span class="text-sm text-gray-700">
-              Welcome, {{ authStore.currentUser?.firstName }}!
-            </span>
-            <button
-              @click="handleLogout"
-              class="bg-gray-100 hover:bg-gray-200 text-gray-700 px-3 py-2 rounded-md text-sm font-medium"
-            >
-              Sign out
-            </button>
+            <div class="relative">
+              <button
+                @click="toggleUserMenu"
+                class="flex items-center text-sm rounded-full focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500"
+              >
+                <span class="text-gray-700 mr-2">
+                  Welcome, {{ authStore.currentUser?.firstName }}!
+                </span>
+                <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                </svg>
+              </button>
+              
+              <!-- Dropdown menu -->
+              <div v-if="showUserMenu" class="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-10">
+                <router-link
+                  to="/auth/change-password"
+                  class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                  @click="showUserMenu = false"
+                >
+                  Change Password
+                </router-link>
+                <button
+                  @click="handleLogout"
+                  class="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                >
+                  Sign out
+                </button>
+              </div>
+            </div>
           </div>
           
           <div v-else class="flex items-center space-x-4">
@@ -75,7 +96,7 @@
 </template>
 
 <script>
-import { computed } from 'vue'
+import { computed, ref, onMounted, onUnmounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useAuthStore } from './stores/auth'
 
@@ -85,17 +106,39 @@ export default {
     const route = useRoute()
     const router = useRouter()
     const authStore = useAuthStore()
+    const showUserMenu = ref(false)
 
     const isAuthPage = computed(() => route.path.startsWith('/auth'))
+
+    const toggleUserMenu = () => {
+      showUserMenu.value = !showUserMenu.value
+    }
 
     const handleLogout = () => {
       authStore.logout()
       router.push('/auth/login')
     }
 
+    // Close menu when clicking outside
+    const handleClickOutside = (event) => {
+      if (!event.target.closest('.relative')) {
+        showUserMenu.value = false
+      }
+    }
+
+    onMounted(() => {
+      document.addEventListener('click', handleClickOutside)
+    })
+
+    onUnmounted(() => {
+      document.removeEventListener('click', handleClickOutside)
+    })
+
     return {
       authStore,
       isAuthPage,
+      showUserMenu,
+      toggleUserMenu,
       handleLogout
     }
   }
