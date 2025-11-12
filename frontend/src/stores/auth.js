@@ -71,6 +71,54 @@ export const useAuthStore = defineStore('auth', () => {
     }
   }
 
+  const forgotPassword = async (email) => {
+    try {
+      loading.value = true
+      error.value = null
+      
+      const response = await api.post('/auth/forgot-password', { email })
+      return { success: true, data: response.data }
+    } catch (err) {
+      error.value = err.response?.data?.message || 'Failed to send reset email'
+      return { success: false, error: error.value }
+    } finally {
+      loading.value = false
+    }
+  }
+
+  const resetPassword = async (token, password) => {
+    try {
+      loading.value = true
+      error.value = null
+      
+      const response = await api.post('/auth/reset-password', { token, password })
+      return { success: true, data: response.data }
+    } catch (err) {
+      error.value = err.response?.data?.message || 'Failed to reset password'
+      return { success: false, error: error.value }
+    } finally {
+      loading.value = false
+    }
+  }
+
+  const changePassword = async (currentPassword, newPassword) => {
+    try {
+      loading.value = true
+      error.value = null
+      
+      const response = await api.post('/auth/change-password', { 
+        currentPassword, 
+        newPassword 
+      })
+      return { success: true, data: response.data }
+    } catch (err) {
+      error.value = err.response?.data?.message || 'Failed to change password'
+      return { success: false, error: error.value }
+    } finally {
+      loading.value = false
+    }
+  }
+
   const logout = () => {
     setToken(null)
     setUser(null)
@@ -103,6 +151,9 @@ export const useAuthStore = defineStore('auth', () => {
     currentUser,
     login,
     register,
+    forgotPassword,
+    resetPassword,
+    changePassword,
     logout,
     fetchProfile
   }

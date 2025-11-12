@@ -8,9 +8,36 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
-- Initial release preparation
-- GitHub Actions CI/CD pipeline
-- Project documentation
+- **Password Reset Functionality**
+  - Forgot password feature with email reset links
+  - Secure token-based password reset system
+  - Password reset email service (development mode logs to console)
+  - Reset token expiration (1 hour)
+  - Frontend components for forgot password and reset password flows
+
+- **Change Password Feature**
+  - Authenticated users can change their passwords
+  - Current password verification
+  - Frontend component for password change
+  - User dropdown menu in navigation
+
+- **Enhanced Authentication**
+  - Additional password reset fields in User entity
+  - Email service for password reset notifications
+  - Secure token generation and validation
+  - Environment configuration for email services
+
+### Changed
+- Updated User entity with password reset fields
+- Enhanced auth store with password reset methods
+- Improved navigation with user dropdown menu
+- Updated environment configuration examples
+
+### Technical
+- Added crypto-based token generation for password reset
+- Implemented email service infrastructure
+- Enhanced security with token expiration
+- Added comprehensive password validation
 
 ## [1.0.0] - 2024-12-01
 

@@ -360,7 +360,7 @@ export default {
         }
 
         if (isEdit.value) {
-          await api.patch(`/invoices/${props.id}`, invoiceData)
+          await api.put(`/invoices/${props.id}`, invoiceData)
         } else {
           await api.post('/invoices', invoiceData)
         }

@@ -25,6 +25,14 @@ export class User {
   @Column({ default: true })
   isActive: boolean;
 
+  // Password reset fields
+  @Column({ nullable: true })
+  @Exclude()
+  resetPasswordToken: string;
+
+  @Column({ nullable: true })
+  resetPasswordExpires: Date;
+
   @OneToMany(() => Client, client => client.user)
   clients: Client[];
 

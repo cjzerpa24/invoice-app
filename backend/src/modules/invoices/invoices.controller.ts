@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, HttpCode, HttpStatus, Query, Res, HttpException, UseGuards } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, HttpCode, HttpStatus, Query, Res, HttpException, UseGuards, Put  } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiResponse, ApiParam, ApiQuery, ApiBearerAuth } from '@nestjs/swagger';
 import { Response } from 'express';
 import { InvoicesService } from './invoices.service';
@@ -69,7 +69,7 @@ export class InvoicesController {
     return await this.invoicesService.findOne(id, user.id);
   }
 
-  @Patch(':id')
+  @Put(':id')
   @ApiOperation({ summary: 'Update an invoice' })
   @ApiParam({ name: 'id', type: 'string', description: 'Invoice ID' })
   @ApiResponse({ status: 200, description: 'Invoice updated successfully', type: Invoice })

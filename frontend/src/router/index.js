@@ -8,6 +8,9 @@ import InvoiceForm from '../views/invoices/InvoiceForm.vue'
 import PersonalDataForm from '../views/PersonalDataForm.vue'
 import Login from '../views/auth/Login.vue'
 import Register from '../views/auth/Register.vue'
+import ForgotPassword from '../views/auth/ForgotPassword.vue'
+import ResetPassword from '../views/auth/ResetPassword.vue'
+import ChangePassword from '../views/auth/ChangePassword.vue'
 
 const routes = [
   {
@@ -21,6 +24,24 @@ const routes = [
     name: 'Register',
     component: Register,
     meta: { guest: true }
+  },
+  {
+    path: '/auth/forgot-password',
+    name: 'ForgotPassword',
+    component: ForgotPassword,
+    meta: { guest: true }
+  },
+  {
+    path: '/auth/reset-password',
+    name: 'ResetPassword',
+    component: ResetPassword,
+    meta: { guest: true }
+  },
+  {
+    path: '/auth/change-password',
+    name: 'ChangePassword',
+    component: ChangePassword,
+    meta: { requiresAuth: true }
   },
   {
     path: '/',
